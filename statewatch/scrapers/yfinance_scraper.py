@@ -25,7 +25,7 @@ class YFinanceScraper:
         yf_ticker = yf.Ticker(f"{ticker.upper()}-USD")
         price = yf_ticker.history(start=date, period="1d")["Close"].iloc[0]
 
-        if price.empty:
+        if not price:
             raise ValueError(f"Price for {ticker} on {date} not found")
 
         return price
@@ -53,7 +53,7 @@ class YFinanceScraper:
         yf_ticker = yf.Ticker(f"{ticker.upper()}-USD")
         prices = yf_ticker.history(start=start_date, end=end_date)["Close"]
 
-        if prices.empty:
+        if not prices:
             raise ValueError(
                 f"Price history for {ticker} from {start_date} to {end_date} not found"
             )
