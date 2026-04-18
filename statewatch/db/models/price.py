@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import pytz
-from sqlalchemy import DateTime, ForeignKey, func
+from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from statewatch.core.config import env
@@ -32,9 +32,9 @@ class Price(Base):
     __tablename__ = "price"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    asset_id: Mapped[int] = mapped_column(ForeignKey("asset.id"), nullable=False, primary_key=True)
+    asset_id: Mapped[int] = mapped_column(ForeignKey("asset.id"), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
-    date: Mapped[datetime] = mapped_column(nullable=False, primary_key=True)
+    date: Mapped[datetime] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
@@ -42,3 +42,8 @@ class Price(Base):
     )
 
     asset: Mapped["Asset"] = relationship(back_populates="prices")
+
+
+    __table_args__ = (
+        UniqueConstraint("asset_id", "date", name="uq_asset_date"),
+    )
