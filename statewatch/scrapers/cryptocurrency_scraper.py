@@ -29,7 +29,9 @@ class CryptocurrencyScraper:
         ValueError
             If the price for the given name is not found.
         """
-        price = await self.client.simple.price.get(vs_currencies="usd", ids=name)
+        price = await self.client.simple.price.get(
+            vs_currencies="usd", ids=name.lower()
+        )
 
         if (price is None) or (name not in price):
             raise ValueError(f"Price for {name} not found")
@@ -64,7 +66,7 @@ class CryptocurrencyScraper:
         """
 
         price = await self.client.coins.history.get(
-            id=name, date=date.strftime(self.time_format)
+            id=name.lower(), date=date.strftime(self.time_format)
         )
 
         if (price is None) or hasattr(price, "market_data") is False:
@@ -107,7 +109,7 @@ class CryptocurrencyScraper:
         """
 
         history = await self.client.coins.market_chart.get_range(
-            id=name,
+            id=name.lower(),
             vs_currency="usd",
             from_=start.strftime(self.time_format),
             to=end.strftime(self.time_format),

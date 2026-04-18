@@ -5,6 +5,12 @@ from .db import DB_Session
 from fastapi import Depends
 
 
+def get_asset_service(
+    db_session: DB_Session,
+) -> services.AssetService:
+    return services.AssetService(db_session)
+
+
 def get_key_service(
     db_session: DB_Session,
 ) -> services.KeyService:
@@ -17,5 +23,6 @@ def get_price_service(
     return services.PriceService(db_session)
 
 
+Asset_Service = Annotated[services.AssetService, Depends(get_asset_service)]
 Key_Service = Annotated[services.KeyService, Depends(get_key_service)]
 Price_Service = Annotated[services.PriceService, Depends(get_price_service)]

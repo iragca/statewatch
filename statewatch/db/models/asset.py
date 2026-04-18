@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List
 
 import pytz
 from sqlalchemy import Enum, func
@@ -33,11 +33,9 @@ class Asset(Base):
     __tablename__ = "asset"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[Optional[str]] = mapped_column(nullable=True)
+    name: Mapped[str] = mapped_column(nullable=False)
     ticker: Mapped[str] = mapped_column(unique=True, nullable=False)
-    asset_class: Mapped[Optional[AssetClass]] = mapped_column(
-        Enum(AssetClass), nullable=True
-    )
+    asset_class: Mapped[AssetClass] = mapped_column(Enum(AssetClass), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         default=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
         server_default=func.now(),
