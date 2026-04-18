@@ -78,7 +78,9 @@ class PriceService:
 
         return results
 
-    def find_missing_prices(self, ticker: str, start_date: Optional[datetime] = None):
+    def find_missing_prices(
+        self, ticker: str, start_date: Optional[datetime] = None
+    ) -> list[datetime]:
         """
         Identify missing price records for a given ticker.
 
@@ -91,7 +93,7 @@ class PriceService:
 
         Returns
         -------
-        List[date]
+        List[datetime]
             A list of dates for which price records are missing.
         """
 
@@ -115,11 +117,49 @@ class PriceService:
         else:
             date_range = [
                 existing_records[-1].date + timedelta(days=i)
-                for i in range(
-                    (datetime.now().date() - existing_records[-1].date).days
-                )
+                for i in range((datetime.now().date() - existing_records[-1].date).days)
             ]
 
         missing_dates = sorted(d for d in date_range if d not in existing_dates)
 
         return missing_dates
+
+    def add_price(self, price: float, date: datetime, asset_id: int):
+        """
+        Add a new price record for a given asset.
+
+        Parameters
+        ----------
+        price : float
+            The price value to be added.
+        date : datetime
+            The date for which the price is being added.
+        asset_id : int
+            The ID of the asset for which to add the price.
+        price : float
+            The price value to be added.
+        date : datetime
+            The date for which the price is being added.
+        """
+
+        new_price = Price(value=price, date=date, asset_id=asset_id)
+        self.db.add(new_price)
+        self.db.commit()
+
+    def add_prices(self, prices: list[tuple[datetime, float]], asset_id: int):
+        """
+        Add multiple price records for a given asset.
+
+        Parameters
+        ----------
+        prices : List[Tuple[float, datetime]]
+            A list of tuples containing the price value and date for each record to be added.
+        asset_id : int
+            The ID of the asset for which to add the prices.
+        """
+
+        new_prices = [
+            Price(value=price, date=date, asset_id=asset_id) for price, date in prices
+        ]
+        self.db.add_all(new_prices)
+        self.db.commit()
