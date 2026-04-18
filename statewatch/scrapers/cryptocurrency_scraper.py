@@ -10,7 +10,6 @@ class CryptocurrencyScraper:
         )
         self.time_format = "%Y-%m-%d"
 
-
     async def get_current_price(self, name: str) -> float:
         """Get the current price of a cryptocurrency in USD.
 
@@ -121,8 +120,7 @@ class CryptocurrencyScraper:
         if history.prices is None:
             raise ValueError(f"Price history for {name} not found")
 
-
-        # The API returns timestamps in milliseconds, 
+        # The API returns timestamps in milliseconds,
         # so we need to convert them to UNIX seconds by dividing by 1000.
         return [
             (datetime.fromtimestamp(price[0] / 1000), price[1])
