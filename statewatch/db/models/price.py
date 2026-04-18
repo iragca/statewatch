@@ -34,7 +34,7 @@ class Price(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     asset_id: Mapped[int] = mapped_column(ForeignKey("asset.id"), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
-    date: Mapped[datetime] = mapped_column(nullable=False)
+    date: Mapped[datetime] = mapped_column(nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
