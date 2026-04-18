@@ -1,0 +1,11 @@
+{
+  "crons": [
+    {
+      "path": "/tasks/update/xmr",
+      "schedule": "0 0 * * *",
+      "headers": {
+        "Api-Key": "@CRON_API_KEY"
+      }
+    }
+  ]
+}
