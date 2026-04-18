@@ -1,5 +1,3 @@
-from typing import Optional
-
 from sqlalchemy.orm import Session
 
 from statewatch.db.models import Asset
@@ -21,9 +19,7 @@ class AssetService:
         """
         self.db = db_session
 
-    def create_asset(
-        self, ticker: str, asset_class: Optional[AssetClass], name: Optional[str]
-    ) -> Asset:
+    def create_asset(self, ticker: str, asset_class: AssetClass, name: str) -> Asset:
         """
         Create a new asset record in the database.
 
