@@ -14,7 +14,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=9.0.3", "ruff>=0.15.11"]
+dev = [
+    "pytest>=9.0.3",
+ "pytest-cov>=7.1.0",
+ "ruff>=0.15.11",
+]
 
 [tool.pytest.ini_options]
 addopts = "--cov-config=.coveragerc --cov=statewatch tests/ --cov-report html"
