@@ -26,5 +26,5 @@ async def update_price(
 
     yesterdays_date = datetime.now().date() - timedelta(days=1)
     price_data = scraper.get_price_by_date(ticker, yesterdays_date)
-    price_service.add_price(price_data, yesterdays_date, asset_id=asset.id)
+    price_service.add_price(price=float(price_data), date=yesterdays_date, asset_id=asset.id)
     return {"message": f"Price for {ticker} updated successfully"}
