@@ -6,13 +6,25 @@ from .services import Key_Service
 
 async def get_client_user(
     key_service: Key_Service,
-    key: Annotated[str, Header(alias="Api-Key")],
+    # Alias changed to Authorization
+    auth_header: Annotated[str, Header(alias="Authorization")],
 ) -> str:
-    if not key:
+    if not auth_header:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="API key is missing",
-            headers={"WWW-Authenticate": "Api-Key"},
+            detail="Authorization header is missing",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        scheme, key = auth_header.split()
+        if scheme.lower() != "bearer":
+            raise ValueError()
+    except (ValueError, AttributeError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication scheme",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     if key_service.does_key_exist(api_key=key):
@@ -21,7 +33,7 @@ async def get_client_user(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="API key is invalid",
-        headers={"WWW-Authenticate": "Api-Key"},
+        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
