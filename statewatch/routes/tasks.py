@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import yfinance as yf
 from fastapi import APIRouter
 
 from statewatch.dependencies.auth import AuthenticatedUser
