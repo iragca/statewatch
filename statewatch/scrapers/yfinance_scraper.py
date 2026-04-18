@@ -1,12 +1,12 @@
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, date
 
 
 class YFinanceScraper:
     def __init__(self):
         pass
 
-    def get_price_by_date(self, ticker: str, date: datetime) -> float:
+    def get_price_by_date(self, ticker: str, date: datetime | date) -> float:
         """
         Fetch the price of a cryptocurrency by its ticker and date.
 
@@ -14,7 +14,7 @@ class YFinanceScraper:
         ----------
         ticker : str
             The ticker symbol of the cryptocurrency.
-        date : datetime
+        date : datetime | date
             The date for which to fetch the price.
 
         Returns

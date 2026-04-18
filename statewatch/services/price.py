@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Optional
 
 from sqlalchemy.orm import Session
@@ -124,7 +124,7 @@ class PriceService:
 
         return missing_dates
 
-    def add_price(self, price: float, date: datetime, asset_id: int):
+    def add_price(self, price: float, date: datetime | date, asset_id: int):
         """
         Add a new price record for a given asset.
 
@@ -132,7 +132,7 @@ class PriceService:
         ----------
         price : float
             The price value to be added.
-        date : datetime
+        date : datetime | date
             The date for which the price is being added.
         asset_id : int
             The ID of the asset for which to add the price.
