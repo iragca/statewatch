@@ -16,12 +16,12 @@ dependencies = [
 dev = ["pytest>=9.0.3", "ruff>=0.15.11"]
 
 [tool.pytest.ini_options]
-addopts = "--cov-config=.coveragerc --cov=timestamp tests/ --cov-report html"
+addopts = "--cov-config=.coveragerc --cov=statewatch tests/ --cov-report html"
 
 [project.scripts]
-app = "timestamp.main:app"
+app = "statewatch.main:app"
 
 [tool.pytest_env]
 MODE = "development"
-DATABASE_URL = "postgresql+psycopg2://timestamp:password@localhost:5432/timestamp"
+DATABASE_URL = "postgresql+psycopg2://statewatch:password@localhost:5432/statewatch"
 TIMEZONE = "UTC"
