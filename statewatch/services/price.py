@@ -142,7 +142,7 @@ class PriceService:
             The date for which the price is being added.
         """
 
-        new_price = Price(value=price, date=date, asset_id=asset_id)
+        new_price = Price(price=price, date=date, asset_id=asset_id)
         self.db.add(new_price)
         self.db.commit()
 
@@ -159,7 +159,7 @@ class PriceService:
         """
 
         new_prices = [
-            Price(value=price, date=date, asset_id=asset_id) for price, date in prices
+            Price(price=price, date=date, asset_id=asset_id) for price, date in prices
         ]
         self.db.add_all(new_prices)
         self.db.commit()
