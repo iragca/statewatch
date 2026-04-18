@@ -60,5 +60,14 @@ class Environment:
         timezone = os.getenv("TIMEZONE", "UTC")
         return timezone
 
+    @property
+    def COINGECKO_DEMO_API_KEY(self) -> str:
+        api_key = os.getenv("COINGECKO_DEMO_API_KEY")
+        if api_key is None:
+            raise EnvironmentError(
+                "COINGECKO_DEMO_API_KEY environment variable is not set."
+            )
+        return api_key
+
 
 env = Environment()
