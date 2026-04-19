@@ -1,7 +1,14 @@
 import os
 from typing import Literal
 
+from pathlib import Path
 from dotenv import load_dotenv
+
+
+PROJ_ROOT = Path(__file__).parent.parent.parent
+
+DATA = PROJ_ROOT / "data"
+PROCESSED_DATA = DATA / "processed"
 
 
 class Environment:
