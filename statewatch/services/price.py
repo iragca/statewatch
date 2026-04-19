@@ -146,7 +146,9 @@ class PriceService:
         self.db.add(new_price)
         self.db.commit()
 
-    def add_prices(self, prices: list[tuple[datetime, float]], asset_id: int):
+    def add_prices(
+        self, prices: list[tuple[datetime, float]], asset_id: int, commit: bool = True
+    ):
         """
         Add multiple price records for a given asset.
 
@@ -156,10 +158,13 @@ class PriceService:
             A list of tuples containing the price value and date for each record to be added.
         asset_id : int
             The ID of the asset for which to add the prices.
+        commit : bool, optional
+            Whether to commit the transaction immediately after adding the prices (default is True).
         """
 
         new_prices = [
             Price(price=price, date=date, asset_id=asset_id) for date, price in prices
         ]
         self.db.add_all(new_prices)
-        self.db.commit()
+        if commit:
+            self.db.commit()
