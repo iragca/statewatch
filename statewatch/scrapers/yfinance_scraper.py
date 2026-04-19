@@ -1,5 +1,10 @@
+from datetime import date, datetime, timedelta
+from typing import Optional
+
+import pytz
 import yfinance as yf
-from datetime import datetime, date
+
+from statewatch.core.config import env
 
 
 class YFinanceScraper:
@@ -31,7 +36,7 @@ class YFinanceScraper:
         return price
 
     def get_price_history(
-        self, ticker: str, start_date: datetime, end_date: datetime
+        self, ticker: str, start_date: Optional[datetime], end_date: Optional[datetime]
     ) -> list[tuple[datetime, float]]:
         """
         Fetch the price history of a cryptocurrency by its ticker and date range.
@@ -40,9 +45,9 @@ class YFinanceScraper:
         ----------
         ticker : str
             The ticker symbol of the cryptocurrency.
-        start_date : datetime
+        start_date : Optional[datetime]
             The start date for the price history.
-        end_date : datetime
+        end_date : Optional[datetime]
             The end date for the price history.
 
         Returns
@@ -50,6 +55,10 @@ class YFinanceScraper:
         list[tuple[datetime, float]]
             A list of tuples containing dates and prices for the specified date range.
         """
+
+        if start_date is None and end_date is None:
+            end_date = datetime.now(tz=pytz.timezone(env.TIMEZONE))
+
         yf_ticker = yf.Ticker(f"{ticker.upper()}")
         prices = yf_ticker.history(start=start_date, end=end_date)["Close"]
 
