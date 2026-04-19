@@ -1,3 +1,5 @@
+from typing import Union
+
 from sqlalchemy.orm import Session
 
 from statewatch.db.models import Asset
@@ -19,7 +21,9 @@ class AssetService:
         """
         self.db = db_session
 
-    def create_asset(self, ticker: str, asset_class: AssetClass, name: str) -> Asset:
+    def create_asset(
+        self, ticker: str, asset_class: Union[AssetClass, str], name: str
+    ) -> Asset:
         """
         Create a new asset record in the database.
 
@@ -37,6 +41,9 @@ class AssetService:
         Asset
             The newly created asset record.
         """
+        if isinstance(asset_class, str):
+            asset_class = AssetClass[asset_class.title()]
+
         asset = Asset(ticker=ticker.upper(), name=name, asset_class=asset_class)
         self.db.add(asset)
         self.db.commit()
