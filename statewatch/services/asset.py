@@ -42,7 +42,7 @@ class AssetService:
             The newly created asset record.
         """
         if isinstance(asset_class, str):
-            asset_class = AssetClass[asset_class.title()]
+            asset_class = AssetClass(asset_class.title())
 
         asset = Asset(ticker=ticker.upper(), name=name, asset_class=asset_class)
         self.db.add(asset)
