@@ -22,7 +22,11 @@ class AssetService:
         self.db = db_session
 
     def create_asset(
-        self, ticker: str, asset_class: Union[AssetClass, str], name: str
+        self,
+        ticker: str,
+        asset_class: Union[AssetClass, str],
+        name: str,
+        commit: bool = True,
     ) -> Asset:
         """
         Create a new asset record in the database.
@@ -35,6 +39,8 @@ class AssetService:
             The class or category to which the asset belongs.
         name : str
             The name of the asset to create.
+        commit : bool, optional
+            Whether to commit the transaction immediately after adding the asset (default is True).
 
         Returns
         -------
@@ -46,8 +52,9 @@ class AssetService:
 
         asset = Asset(ticker=ticker.upper(), name=name, asset_class=asset_class)
         self.db.add(asset)
-        self.db.commit()
-        self.db.refresh(asset)
+        if commit:
+            self.db.commit()
+            self.db.refresh(asset)
         return asset
 
     def get_asset_by_ticker(self, ticker: str) -> Asset:
