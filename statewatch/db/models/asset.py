@@ -33,7 +33,7 @@ class Asset(Base):
     __tablename__ = "asset"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False, unique=True)
     ticker: Mapped[str] = mapped_column(unique=True, nullable=False)
     asset_class: Mapped[AssetClass] = mapped_column(Enum(AssetClass), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
