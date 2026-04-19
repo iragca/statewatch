@@ -5,9 +5,9 @@ import yfinance as yf
 from pytz import timezone
 
 from statewatch.core.config import env
-from statewatch.dependencies.db import get_db_session
-from statewatch.dependencies.services import get_task_service
+from statewatch.db.database import SessionLocal
 from statewatch.schemas.enums import AssetClass
+from statewatch.services import AssetService, PriceService, TransactionOrchestrator
 from statewatch.utils.datetime import convert_datetime_timezone
 
 from .menu import Menu
@@ -18,7 +18,6 @@ class AssetManagerMenu(Menu):
 
     def __init__(self, parent: str | None = None) -> None:
         self.parent_name = parent
-        self.task_service = get_task_service(next(get_db_session()))
 
     def menu(self) -> None:
         previous_choice = None
@@ -83,9 +82,15 @@ class AssetManagerMenu(Menu):
                     )
                     for _, row in history.reset_index().iterrows()
                 ]
-                self.task_service.add_asset_and_prices(
-                    ticker=ticker, asset_class=asset_class, name=name, prices=prices
-                )
+                with TransactionOrchestrator(SessionLocal()) as orchestrator:
+                    asset_service = AssetService(orchestrator.session)
+                    price_service = PriceService(orchestrator.session)
+
+                    asset = asset_service.create_asset(
+                        ticker=ticker, asset_class=asset_class, name=name
+                    )
+                    orchestrator.session.flush()  # Ensure asset ID is generated before adding prices
+                    price_service.add_prices(prices=prices, asset_id=asset.id)
                 questionary.print(
                     "Price history added successfully!", style="bold green"
                 )
