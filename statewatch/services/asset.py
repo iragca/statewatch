@@ -63,3 +63,15 @@ class AssetService:
             raise ValueError("Asset not found for the given ticker")
 
         return result
+
+    def get_current_key_index(self) -> int:
+        """
+        Retrieve the current maximum index of assets in the database.
+
+        Returns
+        -------
+        int
+            The current maximum index of assets, or 0 if no assets exist.
+        """
+        max_index = self.db.query(Asset).order_by(Asset.id.desc()).first()
+        return max_index.id if max_index else 0
