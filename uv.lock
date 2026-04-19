@@ -1636,7 +1636,7 @@ wheels = [
 [[package]]
 name = "statewatch"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "coingecko-sdk" },
     { name = "dotenv" },
@@ -1654,6 +1654,7 @@ dev = [
     { name = "pytest-cov" },
     { name = "questionary" },
     { name = "ruff" },
+    { name = "statewatch" },
 ]
 
 [package.metadata]
@@ -1674,6 +1675,7 @@ dev = [
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "questionary", specifier = ">=2.1.1" },
     { name = "ruff", specifier = ">=0.15.11" },
+    { name = "statewatch", editable = "." },
 ]
 
 [[package]]

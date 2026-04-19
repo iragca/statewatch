@@ -1,3 +1,7 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name = "statewatch"
 version = "0.1.0"
@@ -21,6 +25,7 @@ dev = [
     "pytest-cov>=7.1.0",
     "questionary>=2.1.1",
     "ruff>=0.15.11",
+    "statewatch",
 ]
 
 [tool.pytest.ini_options]
@@ -28,8 +33,12 @@ addopts = "--cov-config=.coveragerc --cov=statewatch tests/ --cov-report html"
 
 [project.scripts]
 app = "statewatch.main:app"
+cli = "statewatch.cli.app:main"
 
 [tool.pytest_env]
 MODE = "development"
 DATABASE_URL = "postgresql+psycopg2://statewatch:password@localhost:5432/statewatch"
 TIMEZONE = "UTC"
+
+[tool.uv.sources]
+statewatch = { workspace = true }
