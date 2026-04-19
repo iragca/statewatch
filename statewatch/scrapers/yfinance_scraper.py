@@ -22,7 +22,7 @@ class YFinanceScraper:
         float
             The price of the cryptocurrency on the specified date.
         """
-        yf_ticker = yf.Ticker(f"{ticker.upper()}-USD")
+        yf_ticker = yf.Ticker(f"{ticker.upper()}")
         price = yf_ticker.history(start=date, period="1d")["Close"].iloc[0]
 
         if not price:
@@ -50,7 +50,7 @@ class YFinanceScraper:
         list[tuple[datetime, float]]
             A list of tuples containing dates and prices for the specified date range.
         """
-        yf_ticker = yf.Ticker(f"{ticker.upper()}-USD")
+        yf_ticker = yf.Ticker(f"{ticker.upper()}")
         prices = yf_ticker.history(start=start_date, end=end_date)["Close"]
 
         if not prices:
