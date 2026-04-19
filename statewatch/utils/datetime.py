@@ -1,5 +1,6 @@
+from datetime import datetime, timedelta
 from itertools import groupby
-from datetime import timedelta, datetime
+from zoneinfo import ZoneInfo
 
 
 def group_consecutive_dates(dates: list[datetime]):
@@ -79,3 +80,21 @@ def group_consecutive_dates(dates: list[datetime]):
         groups.append((group[0], group[-1]))
 
     return groups
+
+
+def convert_datetime_timezone(dt: datetime, tz_str: str) -> datetime:
+    """Convert a datetime object to a specified timezone.
+
+    Parameters
+    ----------
+    dt : datetime
+        The datetime object to convert. It can be naive (no timezone) or aware (with timezone).
+    tz_str : str
+        The target timezone as a string (e.g., "UTC", "America/New_York", "Europe/London").
+
+    Returns
+    -------
+    datetime
+        A timezone-aware datetime object converted to the specified timezone.
+    """
+    return dt.astimezone(ZoneInfo(tz_str))
