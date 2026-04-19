@@ -1,9 +1,8 @@
-
 from sqlalchemy.orm import Session
 
 
-class TransactionalOrchestrator:
-    def __init__(self, session):
+class TransactionOrchestrator:
+    def __init__(self, session: Session):
         self.session = session
 
     def __enter__(self):
