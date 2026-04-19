@@ -52,6 +52,7 @@ class AssetService:
 
         asset = Asset(ticker=ticker.upper(), name=name, asset_class=asset_class)
         self.db.add(asset)
+        self.db.flush()
         if commit:
             self.db.commit()
             self.db.refresh(asset)
