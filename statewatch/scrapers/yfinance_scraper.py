@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from typing import Optional
 
 import pytz
@@ -70,3 +70,25 @@ class YFinanceScraper:
         return sorted(
             [(date.to_pydatetime(), price) for date, price in prices.to_dict().items()]
         )
+
+    def get_asset_info(self, ticker: str) -> dict:
+        """
+        Fetch the asset information of a cryptocurrency by its ticker.
+
+        Parameters
+        ----------
+        ticker : str
+            The ticker symbol of the cryptocurrency.
+
+        Returns
+        -------
+        dict
+            A dictionary containing asset information for the specified ticker.
+        """
+        yf_ticker = yf.Ticker(f"{ticker.upper()}")
+        info = yf_ticker.info
+
+        if not info:
+            raise ValueError(f"Asset information for {ticker} not found")
+
+        return info
