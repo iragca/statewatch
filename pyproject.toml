@@ -19,6 +19,7 @@ dev = [
     "ipykernel>=7.2.0",
     "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
+    "questionary>=2.1.1",
     "ruff>=0.15.11",
 ]
 
