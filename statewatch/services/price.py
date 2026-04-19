@@ -152,14 +152,14 @@ class PriceService:
 
         Parameters
         ----------
-        prices : List[Tuple[float, datetime]]
+        prices : List[Tuple[datetime, float]]
             A list of tuples containing the price value and date for each record to be added.
         asset_id : int
             The ID of the asset for which to add the prices.
         """
 
         new_prices = [
-            Price(price=price, date=date, asset_id=asset_id) for price, date in prices
+            Price(price=price, date=date, asset_id=asset_id) for date, price in prices
         ]
         self.db.add_all(new_prices)
         self.db.commit()
