@@ -5,6 +5,7 @@ from pandas import DataFrame
 
 from statewatch.schemas.enums import ALPHAVANTAGE_DAILY_FUNCTION_COLUMNS as COLUMNS
 from statewatch.schemas.enums import AssetClass
+from statewatch.schemas.types import AssetMetadata
 
 
 class ALPHAVANTAGEScraper:
@@ -81,3 +82,29 @@ class ALPHAVANTAGEScraper:
                 raise ValueError(f"Unsupported asset class: {type}")
 
         return data
+
+    def get_asset_metadata(self, type: AssetClass, ticker: str) -> AssetMetadata:
+        """
+        Fetch the metadata for a cryptocurrency by its ticker.
+
+        Parameters
+        ----------
+        ticker : str
+            The ticker symbol of the cryptocurrency.
+
+        Returns
+        -------
+        AssetMetadata
+            A dictionary containing the metadata for the cryptocurrency.
+        """
+        match type:
+            case AssetClass.CRYPTOCURRENCY:
+                cc = CryptoCurrencies(key=self.api_key, output_format="pandas")
+                result = cc.get_digital_currency_daily(
+                    symbol=ticker.upper(), market="USD"
+                ).reset_index()
+                meta_data: AssetMetadata = result[1]
+            case _:
+                raise ValueError(f"Unsupported asset class: {type}")
+
+        return meta_data
