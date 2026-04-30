@@ -29,13 +29,7 @@ class ALPHAVANTAGEScraper:
         float
             The price of the cryptocurrency on the specified date.
         """
-
-        match type:
-            case AssetClass.CRYPTOCURRENCY:
-                data = self.get_daily_data(type, ticker)
-            case _:
-                raise ValueError(f"Unsupported asset class: {type}")
-
+        data = self._get_daily_data(type, ticker)
         price = data[data[COLUMNS.DATE] == date][COLUMNS.CLOSE]
 
         if not price:
@@ -43,7 +37,25 @@ class ALPHAVANTAGEScraper:
 
         return float(price)
 
-    def get_daily_data(self, type: AssetClass, ticker: str) -> DataFrame:
+    def get_price_history(self, type: AssetClass, ticker: str) -> DataFrame:
+        """
+        Fetch the daily historical data for a cryptocurrency by its ticker.
+
+        Parameters
+        ----------
+        ticker : str
+            The ticker symbol of the cryptocurrency.
+
+        Returns
+        -------
+        DataFrame
+            A DataFrame containing the daily historical data for the cryptocurrency.
+        """
+
+        data = self._get_daily_data(type, ticker)
+        return data[COLUMNS.DATE, COLUMNS.CLOSE]
+
+    def _get_daily_data(self, type: AssetClass, ticker: str) -> DataFrame:
         """
         Fetch the daily historical data for a cryptocurrency by its ticker.
 
