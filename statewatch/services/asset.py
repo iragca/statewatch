@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from statewatch.db.models import Asset
 from statewatch.schemas.enums import AssetClass
+from typing import Optional
 
 
 class AssetService:
@@ -25,7 +26,8 @@ class AssetService:
         self,
         ticker: str,
         asset_class: Union[AssetClass, str],
-        name: str
+        name: str,
+        marketcap: Optional[float] = None,
     ) -> Asset:
         """
         Create a new asset record in the database.
@@ -47,8 +49,14 @@ class AssetService:
         if isinstance(asset_class, str):
             asset_class = AssetClass(asset_class.title())
 
-        asset = Asset(ticker=ticker.upper(), name=name, asset_class=asset_class)
+        asset = Asset(
+            ticker=ticker.upper(),
+            name=name,
+            asset_class=asset_class,
+            marketcap=marketcap,
+        )
         self.db.add(asset)
+        self.db.flush()
         return asset
 
     def get_asset_by_ticker(self, ticker: str) -> Asset:
