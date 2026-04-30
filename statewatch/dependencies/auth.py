@@ -1,19 +1,21 @@
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Header
+from fastapi import Depends, HTTPException, status
+from fastapi.security import APIKeyHeader
+
 from .services import Key_Service
+
+api_key_header = APIKeyHeader(name="Authorization")
 
 
 async def get_client_user(
     key_service: Key_Service,
-    # Alias changed to Authorization
-    auth_header: Annotated[str, Header(alias="Authorization")],
+    auth_header: str = Depends(api_key_header),
 ) -> str:
     if not auth_header:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header is missing",
-            headers={"WWW-Authenticate": "Bearer"},
         )
 
     try:
@@ -24,7 +26,6 @@ async def get_client_user(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication scheme",
-            headers={"WWW-Authenticate": "Bearer"},
         )
 
     if key_service.does_key_exist(api_key=key):
@@ -33,7 +34,6 @@ async def get_client_user(
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="API key is invalid",
-        headers={"WWW-Authenticate": "Bearer"},
     )
 
 
