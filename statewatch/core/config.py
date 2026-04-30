@@ -76,5 +76,14 @@ class Environment:
             )
         return api_key
 
+    @property
+    def ALPHAVANTAGE_API_KEY(self) -> str:
+        api_key = os.getenv("ALPHAVANTAGE_API_KEY")
+        if api_key is None:
+            raise EnvironmentError(
+                "ALPHAVANTAGE_API_KEY environment variable is not set."
+            )
+        return api_key
+
 
 env = Environment()
