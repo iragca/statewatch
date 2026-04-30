@@ -56,7 +56,6 @@ class AssetService:
             marketcap=marketcap,
         )
         self.db.add(asset)
-        self.db.flush()
         return asset
 
     def get_asset_by_ticker(self, ticker: str) -> Asset:
