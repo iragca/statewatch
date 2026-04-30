@@ -28,6 +28,14 @@ class Asset(Base):
         Unique ticker symbol for the asset. (e.g., ``BTC``, ``AAPL``).
     asset_class : str
         The class or category to which the asset belongs (e.g., ``stock``, ``bond``, ``commodity``).
+    marketcap : float
+        The market capitalization of the asset.
+    created_at : datetime
+        Timestamp when the asset record was created.
+    updated_at : datetime
+        Timestamp when the asset record was last updated.
+    prices : List[Price]
+        Relationship to the Price model, representing the historical price data for the asset.
     """
 
     __tablename__ = "asset"
@@ -36,6 +44,7 @@ class Asset(Base):
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     ticker: Mapped[str] = mapped_column(unique=True, nullable=False)
     asset_class: Mapped[AssetClass] = mapped_column(Enum(AssetClass), nullable=False)
+    marketcap: Mapped[float] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         default=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
         server_default=func.now(),
