@@ -6,8 +6,10 @@ from fastapi import APIRouter
 from statewatch.core.config import env
 from statewatch.dependencies.auth import AuthenticatedUser
 from statewatch.dependencies.services import Asset_Service, Price_Service
+from statewatch.dependencies.db import DB_Session
 from statewatch.schemas.enums import AssetClass
 from statewatch.scrapers import ALPHAVANTAGEScraper
+from statewatch.services import TransactionOrchestrator, AssetService, PriceService
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -33,3 +35,38 @@ async def update_price(
     price_data = scraper.get_price_by_date(type, ticker, delay_date)
     price_service.add_price(price=float(price_data), date=delay_date, asset_id=asset.id)
     return {"message": f"Price for {ticker} updated successfully"}
+
+
+@router.get("/add/{ticker}")
+async def add_price(
+    ticker: str,
+    type: AssetClass,
+    DB_session: DB_Session,
+    _: AuthenticatedUser,
+):
+    """
+    Add a new asset  by its ticker symbol.
+
+    Access Level: Authenticated users only.
+    """
+    with TransactionOrchestrator(DB_session) as transaction:
+        asset_service = AssetService(transaction.session)
+        price_service = PriceService(transaction.session)
+
+        scraper = ALPHAVANTAGEScraper(ALPHAVANTAGE_API_KEY=env.ALPHAVANTAGE_API_KEY)
+        asset_data = scraper.get_asset_metadata(type, ticker)
+        asset = asset_service.create_asset(
+            ticker=ticker,
+            name=asset_data["3. Digital Currency Name"],
+            asset_class=type,
+        )
+        transaction.session.flush()  # Ensure asset.id is available before adding prices
+
+        price_history = scraper.get_price_history(type, ticker)
+
+        for date, price in price_history.itertuples(index=False):
+            price_service.add_price(price=float(price), date=date, asset_id=asset.id)
+
+    return {"message": f"Asset {ticker} and its price history added successfully"}
+
+    
