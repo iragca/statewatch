@@ -98,21 +98,28 @@ async def update_all_prices(
                     name=asset.name.lower(), date=datetime.now(tz=pytz.timezone(env.TIMEZONE))
                 )
 
-                price_service.add_price(
-                    price=float(price),
-                    date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
-                    asset_id=asset.id,
-                )
+                try:
+                    price_service.add_price(
+                        price=float(price),
+                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
+                        asset_id=asset.id,
+                    )
+                except Exception:
+                    continue
             else:
                 scraper = YFinanceScraper()
                 delay = timedelta(days=2)
                 date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
                 delayed_date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date() - delay
                 price = scraper.get_price_by_date(ticker=asset.ticker, date=delayed_date)
-                price_service.add_price(
-                    price=float(price),
-                    date=date,
-                    asset_id=asset.id,
-                )
+
+                try:
+                    price_service.add_price(
+                        price=float(price),
+                        date=date,
+                        asset_id=asset.id,
+                    )
+                except Exception:
+                    continue
 
     return {"message": "All prices updated successfully"}
