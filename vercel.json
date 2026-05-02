@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/tasks/update/xmr-usd",
+      "path": "/tasks/update_all",
       "schedule": "0 0 * * *"
     }
   ]
