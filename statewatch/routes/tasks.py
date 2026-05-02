@@ -114,3 +114,5 @@ async def update_all_prices(
                     date=date,
                     asset_id=asset.id,
                 )
+
+    return {"message": "All prices updated successfully"}
