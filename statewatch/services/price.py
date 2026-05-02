@@ -147,8 +147,10 @@ class PriceService:
         try:
             new_price = Price(price=price, date=date, asset_id=asset_id)
             self.db.add(new_price)
+            self.db.flush()
             return new_price
         except IntegrityError as e:
+            self.db.rollback()
             if isinstance(e.orig, UniqueViolation):
                 raise ValueError("Price record already exists for the given date and asset.")
             else:
