@@ -1,6 +1,8 @@
-from datetime import datetime, timedelta, date
+from datetime import date, datetime, timedelta
 from typing import Optional
 
+from psycopg2.errors import UniqueViolation  # type: ignore[attr-defined]
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from statewatch.db.models import Asset, Price
@@ -142,9 +144,15 @@ class PriceService:
             The date for which the price is being added.
         """
 
-        new_price = Price(price=price, date=date, asset_id=asset_id)
-        self.db.add(new_price)
-        return new_price
+        try:
+            new_price = Price(price=price, date=date, asset_id=asset_id)
+            self.db.add(new_price)
+            return new_price
+        except IntegrityError as e:
+            if isinstance(e.orig, UniqueViolation):
+                raise ValueError("Price record already exists for the given date and asset.")
+            else:
+                raise e
 
     def add_prices(self, prices: list[tuple[datetime, float]], asset_id: int):
         """

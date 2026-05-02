@@ -104,8 +104,11 @@ async def update_all_prices(
                         date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
                         asset_id=asset.id,
                     )
-                except Exception:
-                    continue
+                except ValueError as e:
+                    if "Price record already exists" in str(e):
+                        continue
+                    else:
+                        raise e
             else:
                 scraper = YFinanceScraper()
                 delay = timedelta(days=2)
@@ -119,7 +122,10 @@ async def update_all_prices(
                         date=date,
                         asset_id=asset.id,
                     )
-                except Exception:
-                    continue
+                except ValueError as e:
+                    if "Price record already exists" in str(e):
+                        continue
+                    else:
+                        raise e
 
     return {"message": "All prices updated successfully"}
