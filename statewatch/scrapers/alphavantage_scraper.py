@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 
 from statewatch.wrappers.alphavantage import CustomCommodities
 from alpha_vantage.cryptocurrencies import CryptoCurrencies
@@ -12,9 +12,7 @@ class ALPHAVANTAGEScraper:
     def __init__(self, ALPHAVANTAGE_API_KEY: str):
         self.api_key = ALPHAVANTAGE_API_KEY
 
-    def get_price_by_date(
-        self, type: AssetClass, ticker: str, date: datetime | date
-    ) -> float:
+    def get_price_by_date(self, type: AssetClass, ticker: str, date: date) -> float:
         """
         Fetch the price of a cryptocurrency by its ticker and date.
 
@@ -22,7 +20,7 @@ class ALPHAVANTAGEScraper:
         ----------
         ticker : str
             The ticker symbol of the cryptocurrency.
-        date : datetime | date
+        date : date
             The date for which to fetch the price.
 
         Returns
@@ -31,7 +29,13 @@ class ALPHAVANTAGEScraper:
             The price of the cryptocurrency on the specified date.
         """
         data = self._get_daily_data(type, ticker)
-        price = data[data[COLUMNS.DATE] == date][COLUMNS.CLOSE]
+
+        if type == AssetClass.CRYPTOCURRENCY:
+            price = data[data[COLUMNS.DATE] == str(date)][COLUMNS.CLOSE]
+        elif type == AssetClass.COMMODITY:
+            price = data[data[COLUMNS.DATE] == str(date)][COLUMNS.PRICE]
+        else:
+            raise NotImplementedError(f"Price fetching not implemented for asset class: {type}")
 
         if not price:
             raise ValueError(f"Price for {ticker} on {date} not found")
