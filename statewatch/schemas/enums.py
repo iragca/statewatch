@@ -19,7 +19,7 @@ class Mode(str, Enum):
 class ALPHAVANTAGE_DAILY_FUNCTION_COLUMNS(str, Enum):
     """
     Column names for the Alpha Vantage daily function output.
-    Assumes the `pandas.DataFrame.reset_index()` format.
+    Not all columns are used for each function, but are commonly found.
     """
 
     DATE = "date"
@@ -28,3 +28,4 @@ class ALPHAVANTAGE_DAILY_FUNCTION_COLUMNS(str, Enum):
     LOW = "3. low"
     CLOSE = "4. close"
     VOLUME = "5. volume"
+    PRICE = "price"
