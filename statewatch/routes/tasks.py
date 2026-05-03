@@ -8,6 +8,7 @@ from statewatch.dependencies.auth import AuthenticatedUser
 from statewatch.dependencies.db import DB_Session
 from statewatch.schemas.enums import AssetClass
 from statewatch.scrapers import (
+    ALPHAVANTAGEScraper,
     CryptocurrencyScraper,
     YFinanceScraper,
 )
@@ -46,6 +47,24 @@ async def update_all_prices(
                         price=float(price),
                         date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
                         asset_id=asset.id,
+                    )
+                except ValueError as e:
+                    if "Price record already exists" in str(e):
+                        continue
+                    else:
+                        raise e
+            elif asset.asset_class == AssetClass.COMMODITY:
+                scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
+                price = scraper.get_price_by_date(
+                    type=AssetClass.COMMODITY,
+                    ticker=asset.ticker,
+                    date=datetime.today().date(),
+                )
+                try:
+                    price_service.add_price(
+                        asset_id=asset.id,
+                        price=float(price),
+                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
                     )
                 except ValueError as e:
                     if "Price record already exists" in str(e):
