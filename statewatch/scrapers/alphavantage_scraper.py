@@ -1,11 +1,11 @@
 from datetime import date, datetime
 
+from statewatch.wrappers.alphavantage import CustomCommodities
 from alpha_vantage.cryptocurrencies import CryptoCurrencies
 from pandas import DataFrame
 
 from statewatch.schemas.enums import ALPHAVANTAGE_DAILY_FUNCTION_COLUMNS as COLUMNS
 from statewatch.schemas.enums import AssetClass
-from statewatch.schemas.types import AssetMetadata
 
 
 class ALPHAVANTAGEScraper:
@@ -40,52 +40,50 @@ class ALPHAVANTAGEScraper:
 
     def get_price_history(self, type: AssetClass, ticker: str) -> DataFrame:
         """
-        Fetch the daily historical data for a cryptocurrency by its ticker.
+        Fetch the daily historical data for an asset by its ticker.
 
         Parameters
         ----------
         ticker : str
-            The ticker symbol of the cryptocurrency.
+            The ticker symbol of the asset.
 
         Returns
         -------
         DataFrame
-            A DataFrame containing the daily historical data for the cryptocurrency.
+            A DataFrame containing the daily historical data for the asset.
         """
 
         data = self._get_daily_data(type, ticker)
-        return data[COLUMNS.DATE, COLUMNS.CLOSE]
+        return data
 
     def _get_daily_data(self, type: AssetClass, ticker: str) -> DataFrame:
         """
-        Fetch the daily historical data for a cryptocurrency by its ticker.
+        Fetch the daily historical data for an asset by its ticker.
 
         Parameters
         ----------
         ticker : str
-            The ticker symbol of the cryptocurrency.
+            The ticker symbol of the asset.
 
         Returns
         -------
         DataFrame
-            A DataFrame containing the daily historical data for the cryptocurrency.
+            A DataFrame containing the daily historical data for the asset.
         """
 
         match type:
             case AssetClass.CRYPTOCURRENCY:
-                cc = CryptoCurrencies(key=self.api_key, output_format="pandas")
-                result = cc.get_digital_currency_daily(
-                    symbol=ticker.upper(), market="USD"
-                ).reset_index()
-                data: DataFrame = result[0]
+                data = self.get_cryptocurrency_history(ticker)
+            case AssetClass.COMMODITY:
+                data = self.get_commodities_history(ticker)
             case _:
                 raise ValueError(f"Unsupported asset class: {type}")
 
         return data
 
-    def get_asset_metadata(self, type: AssetClass, ticker: str) -> AssetMetadata:
+    def get_cryptocurrency_history(self, ticker: str) -> DataFrame:
         """
-        Fetch the metadata for a cryptocurrency by its ticker.
+        Fetch the daily historical data for a cryptocurrency by its ticker.
 
         Parameters
         ----------
@@ -94,17 +92,36 @@ class ALPHAVANTAGEScraper:
 
         Returns
         -------
-        AssetMetadata
-            A dictionary containing the metadata for the cryptocurrency.
+        DataFrame
+            A DataFrame containing the daily historical data for the cryptocurrency.
         """
-        match type:
-            case AssetClass.CRYPTOCURRENCY:
-                cc = CryptoCurrencies(key=self.api_key, output_format="pandas")
-                result = cc.get_digital_currency_daily(
-                    symbol=ticker.upper(), market="USD"
-                ).reset_index()
-                meta_data: AssetMetadata = result[1]
-            case _:
-                raise ValueError(f"Unsupported asset class: {type}")
+        cc = CryptoCurrencies(key=self.api_key, output_format="pandas")
+        dataframe, _ = cc.get_digital_currency_daily(
+            symbol=ticker.upper(), market="USD"
+        )
+        return dataframe.reset_index(drop=True)[[COLUMNS.DATE, COLUMNS.CLOSE]]
 
-        return meta_data
+    def get_commodities_history(self, ticker: str) -> DataFrame:
+        """
+        Fetch the daily historical data for a commodity by its ticker.
+
+        Parameters
+        ----------
+        ticker : str
+            The ticker symbol of the commodity.
+
+        Returns
+        -------
+        DataFrame
+            A DataFrame containing the daily historical data for the commodity.
+        """
+        comms = CustomCommodities(key=self.api_key, output_format="pandas")
+        match ticker.upper():
+            case "GOLD" | "XAU":
+                dataframe, _ = comms.get_gold(interval="daily")
+            case "SILVER" | "XAG":
+                dataframe, _ = comms.get_silver(interval="daily")
+            case _:
+                raise ValueError(f"Unsupported commodity ticker: {ticker}")
+
+        return dataframe.reset_index(drop=True)[[COLUMNS.DATE, COLUMNS.PRICE]]
