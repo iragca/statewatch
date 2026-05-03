@@ -4,7 +4,7 @@ from enum import Enum
 class AssetClass(str, Enum):
     STOCKS = "Stocks"
     CRYPTOCURRENCY = "Cryptocurrency"
-    COMMODITIES = "Commodities"
+    COMMODITY = "Commodity"
     CURRENCY = "Currency"
     BONDS = "Bonds"
     REAL_ESTATE = "Real Estate"
