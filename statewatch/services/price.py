@@ -152,7 +152,9 @@ class PriceService:
         except IntegrityError as e:
             self.db.rollback()
             if isinstance(e.orig, UniqueViolation):
-                raise ValueError("Price record already exists for the given date and asset.")
+                raise ValueError(
+                    "Price record already exists for the given date and asset."
+                )
             else:
                 raise e
 

@@ -43,7 +43,4 @@ class Price(Base):
 
     asset: Mapped["Asset"] = relationship(back_populates="prices")
 
-
-    __table_args__ = (
-        UniqueConstraint("asset_id", "date", name="uq_asset_date"),
-    )
+    __table_args__ = (UniqueConstraint("asset_id", "date", name="uq_asset_date"),)

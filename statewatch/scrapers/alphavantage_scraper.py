@@ -35,7 +35,9 @@ class ALPHAVANTAGEScraper:
         elif type == AssetClass.COMMODITY:
             price = data[data[COLUMNS.DATE] == str(date)][COLUMNS.PRICE]
         else:
-            raise NotImplementedError(f"Price fetching not implemented for asset class: {type}")
+            raise NotImplementedError(
+                f"Price fetching not implemented for asset class: {type}"
+            )
 
         if not price:
             raise ValueError(f"Price for {ticker} on {date} not found")

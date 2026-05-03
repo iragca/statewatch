@@ -91,7 +91,6 @@ class AssetService:
         max_index = self.db.query(Asset).order_by(Asset.id.desc()).first()
         return max_index.id if max_index else 0
 
-
     def get_all_assets(self) -> list[Asset]:
         """
         Retrieve all asset records from the database.
