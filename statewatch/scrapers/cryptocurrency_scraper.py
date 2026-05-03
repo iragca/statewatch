@@ -66,7 +66,7 @@ class CryptocurrencyScraper:
         """
 
         price = await self.client.coins.history.get(
-            id=name.lower(), date=date.strftime(self.time_format)
+            id=name.lower().replace(" ", "-"), date=date.strftime(self.time_format)
         )
 
         if (price is None) or hasattr(price, "market_data") is False:
