@@ -3,6 +3,7 @@ from enum import Enum
 
 class AssetClass(str, Enum):
     STOCKS = "Stocks"
+    INDEX = "Index"
     CRYPTOCURRENCY = "Cryptocurrency"
     COMMODITY = "Commodity"
     CURRENCY = "Currency"
