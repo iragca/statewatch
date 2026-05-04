@@ -34,28 +34,21 @@ async def update_all_prices(
         assets = asset_service.get_all_assets()
 
         for asset in assets:
-            if asset.asset_class == AssetClass.CRYPTOCURRENCY:
-                scraper = CryptocurrencyScraper(env.COINGECKO_DEMO_API_KEY)
+            try:
+                if asset.asset_class == AssetClass.CRYPTOCURRENCY:
+                    scraper = CryptocurrencyScraper(env.COINGECKO_DEMO_API_KEY)
 
-                price = await scraper.get_price_by_date(
-                    name=asset.name.lower(),
-                    date=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
-                )
-
-                try:
+                    price = await scraper.get_price_by_date(
+                        name=asset.name.lower(),
+                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
+                    )
                     price_service.add_price(
                         price=float(price),
                         date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
                         asset_id=asset.id,
                     )
-                except ValueError as e:
-                    if "Price record already exists" in str(e):
-                        continue
-                    else:
-                        raise e
-            elif asset.asset_class == AssetClass.COMMODITY:
-                scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
-                try:
+                elif asset.asset_class == AssetClass.COMMODITY:
+                    scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
                     price = scraper.get_price_by_date(
                         type=AssetClass.COMMODITY,
                         ticker=asset.ticker,
@@ -66,34 +59,26 @@ async def update_all_prices(
                         price=float(price),
                         date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
                     )
-                except ValueError as e:
-                    if "Price record already exists" in str(e):
-                        continue
-                    if "Price for" in str(e) and "not found" in str(e):
-                        continue
-                    else:
-                        raise e
-            else:
-                scraper = YFinanceScraper()
-                delay = timedelta(days=2)
-                date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
-                delayed_date = (
-                    datetime.now(tz=pytz.timezone(env.TIMEZONE)).date() - delay
-                )
-                price = scraper.get_price_by_date(
-                    ticker=asset.ticker, date=delayed_date
-                )
 
-                try:
+                else:
+                    scraper = YFinanceScraper()
+                    delay = timedelta(days=2)
+                    date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
+                    delayed_date = date - delay
+                    price = scraper.get_price_by_date(
+                        ticker=asset.ticker, date=delayed_date
+                    )
                     price_service.add_price(
                         price=float(price),
                         date=date,
                         asset_id=asset.id,
                     )
-                except ValueError as e:
-                    if "Price record already exists" in str(e):
-                        continue
-                    else:
-                        raise e
+            except ValueError as e:
+                if "Price record already exists" in str(e):
+                    continue
+                if "Price for" in str(e) and "not found" in str(e):
+                    continue
+                else:
+                    raise e
 
     return {"message": "All prices updated successfully"}
