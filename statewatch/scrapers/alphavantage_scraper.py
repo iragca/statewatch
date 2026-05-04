@@ -123,6 +123,8 @@ class ALPHAVANTAGEScraper:
         """
         comms = CustomCommodities(key=self.api_key, output_format="pandas")
         match ticker.upper():
+            case "WTI":
+                dataframe, _ = comms.get_wti(interval="daily")
             case "GOLD" | "XAU":
                 dataframe, _ = comms.get_gold(interval="daily")
             case "SILVER" | "XAG":
