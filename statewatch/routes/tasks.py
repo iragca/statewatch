@@ -55,12 +55,12 @@ async def update_all_prices(
                         raise e
             elif asset.asset_class == AssetClass.COMMODITY:
                 scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
-                price = scraper.get_price_by_date(
-                    type=AssetClass.COMMODITY,
-                    ticker=asset.ticker,
-                    date=datetime.today().date(),
-                )
                 try:
+                    price = scraper.get_price_by_date(
+                        type=AssetClass.COMMODITY,
+                        ticker=asset.ticker,
+                        date=datetime.today().date(),
+                    )
                     price_service.add_price(
                         asset_id=asset.id,
                         price=float(price),
@@ -68,6 +68,8 @@ async def update_all_prices(
                     )
                 except ValueError as e:
                     if "Price record already exists" in str(e):
+                        continue
+                    if "Price for" in str(e) and "not found" in str(e):
                         continue
                     else:
                         raise e
