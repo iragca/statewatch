@@ -1,5 +1,5 @@
 from coingecko_sdk import AsyncCoingecko
-from datetime import datetime
+from datetime import datetime, date
 
 
 class CryptocurrencyScraper:
@@ -43,7 +43,7 @@ class CryptocurrencyScraper:
 
         return float(usd)
 
-    async def get_price_by_date(self, name: str, date: datetime) -> float:
+    async def get_price_by_date(self, name: str, date: date) -> float:
         """Get the price of a cryptocurrency in USD for a specific date.
 
         Parameters
@@ -66,7 +66,7 @@ class CryptocurrencyScraper:
         """
 
         price = await self.client.coins.history.get(
-            id=name.lower().replace(" ", "-"), date=date.strftime(self.time_format)
+            id=name.lower().replace(" ", "-"), date=str(date)
         )
 
         if (price is None) or hasattr(price, "market_data") is False:

@@ -37,27 +37,29 @@ async def update_all_prices(
             try:
                 if asset.asset_class == AssetClass.CRYPTOCURRENCY:
                     scraper = CryptocurrencyScraper(env.COINGECKO_DEMO_API_KEY)
+                    date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
 
                     price = await scraper.get_price_by_date(
                         name=asset.name.lower(),
-                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)),
+                        date=date,
                     )
                     price_service.add_price(
                         price=float(price),
-                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
+                        date=date,
                         asset_id=asset.id,
                     )
                 elif asset.asset_class == AssetClass.COMMODITY:
                     scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
+                    date= datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
                     price = scraper.get_price_by_date(
                         type=AssetClass.COMMODITY,
                         ticker=asset.ticker,
-                        date=datetime.today().date(),
+                        date=date,
                     )
                     price_service.add_price(
                         asset_id=asset.id,
                         price=float(price),
-                        date=datetime.now(tz=pytz.timezone(env.TIMEZONE)).date(),
+                        date=date,
                     )
 
                 else:
