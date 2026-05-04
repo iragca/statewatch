@@ -31,3 +31,4 @@ class ALPHAVANTAGE_DAILY_FUNCTION_COLUMNS(str, Enum):
     CLOSE = "4. close"
     VOLUME = "5. volume"
     PRICE = "price"
+    VALUE = "value"

@@ -39,7 +39,7 @@ class ALPHAVANTAGEScraper:
                 f"Price fetching not implemented for asset class: {type}"
             )
 
-        if not price:
+        if price.empty:
             raise ValueError(f"Price for {ticker} on {date} not found")
 
         return float(price)
@@ -125,6 +125,7 @@ class ALPHAVANTAGEScraper:
         match ticker.upper():
             case "WTI":
                 dataframe, _ = comms.get_wti(interval="daily")
+                dataframe = dataframe.rename(columns={COLUMNS.VALUE: COLUMNS.PRICE})
             case "GOLD" | "XAU":
                 dataframe, _ = comms.get_gold(interval="daily")
             case "SILVER" | "XAG":
