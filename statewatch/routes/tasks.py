@@ -13,6 +13,7 @@ from statewatch.scrapers import (
     YFinanceScraper,
 )
 from statewatch.services import AssetService, PriceService, TransactionOrchestrator
+from time import sleep
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
 
@@ -82,5 +83,7 @@ async def update_all_prices(
                     continue
                 else:
                     raise e
+
+            sleep(1)
 
     return {"message": "All prices updated successfully"}
