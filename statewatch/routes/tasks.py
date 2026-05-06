@@ -51,7 +51,7 @@ async def update_all_prices(
                     )
                 elif asset.asset_class == AssetClass.COMMODITY:
                     scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
-                    date= datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
+                    date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
                     price = scraper.get_price_by_date(
                         type=AssetClass.COMMODITY,
                         ticker=asset.ticker,
