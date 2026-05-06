@@ -1,6 +1,6 @@
 <h1 align="center">StateWatch</h1>
 
-<h3 align="center">A simple data pipeline for keeping up with state of world economy.</h3>
+<h3 align="center">A simple data pipeline for keeping up with the state of the world economy.</h3>
 
 ---
 
