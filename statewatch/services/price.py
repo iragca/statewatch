@@ -70,7 +70,7 @@ class PriceService:
         results = (
             self.db.query(Price)
             .join(Price.asset)
-            .filter(Asset.ticker == ticker.upper())
+            .filter(Asset.ticker.lower() == ticker.lower())
             .order_by(Price.date.desc())
             .all()
         )
