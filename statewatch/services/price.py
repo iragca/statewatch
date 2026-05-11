@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import Optional
 
 from psycopg2.errors import UniqueViolation  # type: ignore[attr-defined]
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -70,7 +71,7 @@ class PriceService:
         results = (
             self.db.query(Price)
             .join(Price.asset)
-            .filter(Asset.ticker.lower() == ticker.lower())
+            .filter(func.lower(Asset.ticker) == ticker.lower())
             .order_by(Price.date.desc())
             .all()
         )
