@@ -73,7 +73,7 @@ async def update_all_prices(
                     )
                     price_service.add_price(
                         price=float(price),
-                        date=date,
+                        date=delayed_date,
                         asset_id=asset.id,
                     )
             except ValueError as e:
