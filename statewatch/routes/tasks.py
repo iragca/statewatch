@@ -36,6 +36,7 @@ async def update_all_prices(
 
         for asset in assets:
             try:
+                print(f"Updating price for {asset.name} ({asset.ticker})")
                 if asset.asset_class == AssetClass.CRYPTOCURRENCY:
                     scraper = CryptocurrencyScraper(env.COINGECKO_DEMO_API_KEY)
                     date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
@@ -49,20 +50,23 @@ async def update_all_prices(
                         date=date,
                         asset_id=asset.id,
                     )
+                    print(f"Price for {asset.name} on {date} updated successfully: {price}")
                 elif asset.asset_class == AssetClass.COMMODITY:
                     scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
                     date = datetime.now(tz=pytz.timezone(env.TIMEZONE)).date()
+                    delay = timedelta(days=1)
+                    delayed_date = date - delay
                     price = scraper.get_price_by_date(
                         type=AssetClass.COMMODITY,
                         ticker=asset.ticker,
-                        date=date,
+                        date=delayed_date,
                     )
                     price_service.add_price(
                         asset_id=asset.id,
                         price=float(price),
-                        date=date,
+                        date=delayed_date,
                     )
-
+                    print(f"Price for {asset.name} on {date} updated successfully: {price}")
                 else:
                     scraper = YFinanceScraper()
                     delay = timedelta(days=2)
@@ -76,12 +80,16 @@ async def update_all_prices(
                         date=delayed_date,
                         asset_id=asset.id,
                     )
+                    print(f"Price for {asset.name} on {delayed_date} updated successfully: {price}")
             except ValueError as e:
                 if "Price record already exists" in str(e):
+                    print(f"Price for {asset.name} on {date} already exists. Skipping.")
                     continue
                 if "Price for" in str(e) and "not found" in str(e):
+                    print(f"Price for {asset.name} on {date} not found. Skipping.")
                     continue
                 else:
+                    print(f"Error updating price for {asset.name} on {date}: {e}")
                     raise e
 
             sleep(1)
