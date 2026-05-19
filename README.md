@@ -16,4 +16,4 @@ We gather data from 3 different sources to leverage free demos and access. The F
 
 All data is stored on a PostgreSQL database hosted for free by Supabase. Once data is available, the Google Data Studio [dashboards](https://datastudio.google.com/reporting/5a683a41-92af-4ec0-9fb3-8b4fe1103c89) are hydrated using table views defined within the database.
 
-Daily updates are also uploaded to Kaggle Datasets using Airflow
+Daily updates are also uploaded to [Kaggle Datasets](https://www.kaggle.com/iragca/datasets) using Airflow
