@@ -125,7 +125,7 @@ class ALPHAVANTAGEScraper:
         match ticker.upper():
             case "WTI":
                 dataframe, _ = comms.get_wti(interval="daily")
-                dataframe = dataframe.rename(columns={COLUMNS.VALUE: COLUMNS.PRICE})
+                dataframe = dataframe.rename(columns={COLUMNS.VALUE.value: COLUMNS.PRICE.value})
             case "GOLD" | "XAU":
                 dataframe, _ = comms.get_gold(interval="daily")
             case "SILVER" | "XAG":
