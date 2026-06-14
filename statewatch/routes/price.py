@@ -1,11 +1,14 @@
 from typing import List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import Response
 
+from statewatch.dependencies.auth import AuthenticatedUser
+from statewatch.dependencies.db import DB_Session
 from statewatch.dependencies.services import Price_Service
 from statewatch.formats import CSV
 from statewatch.schemas import price as price_schema
+from statewatch.services import AssetService, PriceService, TransactionOrchestrator
 
 router = APIRouter(prefix="/price", tags=["Price"])
 
@@ -51,3 +54,26 @@ async def read_price_history(
         )
 
     return [price_schema.Root.model_validate(price) for price in prices]
+
+
+@router.post("/add", status_code=status.HTTP_201_CREATED)
+async def add_price(
+    body: price_schema.PriceInsert,
+    DB_session: DB_Session,
+    _: AuthenticatedUser,
+):
+    """
+    Insert a new price record for an asset.
+
+    Access Level: Authenticated users only.
+    """
+    with TransactionOrchestrator(DB_session) as transaction:
+        asset_service = AssetService(transaction.session)
+        price_service = PriceService(transaction.session)
+        asset = asset_service.get_asset_by_ticker(body.ticker)
+        price_service.add_price(
+            price=body.price,
+            date=body.date,
+            asset_id=asset.id,
+        )
+    return {"message": f"Price for {body.ticker} added successfully"}
