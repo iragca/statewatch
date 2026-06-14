@@ -22,7 +22,6 @@ def update_prices():
     update_crypto_price.override(task_id="update_xmr")("XMR", "monero")
     update_crypto_price.override(task_id="update_btc")("BTC", "bitcoin")
     update_commodity_price.override(task_id="update_xau")("XAU")
-    update_commodity_price.override(task_id="update_wti")("WTI")
     update_index_price.override(task_id="update_gspc")("^GSPC")
     update_fund_price.override(task_id="update_m1alfmmu")("M1ALFMMU")
 
