@@ -10,6 +10,7 @@ class AssetClass(str, Enum):
     BONDS = "Bonds"
     REAL_ESTATE = "Real Estate"
     FUTURES = "Futures"
+    FUNDS = "Funds"
 
 
 class Mode(str, Enum):
