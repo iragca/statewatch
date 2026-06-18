@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import Response
 
 from statewatch.dependencies.auth import AuthenticatedUser
@@ -9,6 +9,7 @@ from statewatch.dependencies.services import Price_Service
 from statewatch.formats import CSV
 from statewatch.schemas import price as price_schema
 from statewatch.services import AssetService, PriceService, TransactionOrchestrator
+from statewatch.utils.errors import PriceExistsError
 
 router = APIRouter(prefix="/price", tags=["Price"])
 
@@ -71,10 +72,15 @@ async def add_price(
         asset_service = AssetService(transaction.session)
         price_service = PriceService(transaction.session)
         asset = asset_service.get_asset_by_ticker(body.ticker)
-        price_service.add_price(
-            price=body.price,
-            date=body.date,
-            asset_id=asset.id,
-            currency=body.currency,
-        )
+        try:
+            price_service.add_price(
+                price=body.price,
+                date=body.date,
+                asset_id=asset.id,
+                currency=body.currency,
+            )
+        except PriceExistsError as e:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail=str(e)
+            )
     return {"message": f"Price for {body.ticker} added successfully"}

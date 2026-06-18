@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from statewatch.db.models import Asset, Price
 from statewatch.schemas.enums import Currency
 from statewatch.scrapers import CryptocurrencyScraper
+from statewatch.utils.errors import PriceExistsError
 
 
 class PriceService:
@@ -160,9 +161,7 @@ class PriceService:
         except IntegrityError as e:
             self.db.rollback()
             if isinstance(e.orig, UniqueViolation):
-                raise ValueError(
-                    "Price record already exists for the given date and asset."
-                )
+                raise PriceExistsError()
             else:
                 raise e
 
