@@ -2,7 +2,7 @@ import os
 from datetime import date, timedelta
 
 import requests
-from airflow.sdk import task
+from airflow.sdk import task, get_current_context
 
 from statewatch.core.config import env
 from statewatch.schemas.enums import AssetClass, Currency
@@ -27,7 +27,9 @@ def _post_price(ticker: str, price: float, dt: date, currency: Currency = Curren
 
 @task(retries=3, retry_delay=timedelta(minutes=5))
 def update_crypto_price(ticker: str, coin_id: str):
-    dt = date.today()
+    context = get_current_context()
+    dt = context["logical_date"].date()
+    print(f"Updating price for {ticker} on {dt}")
     scraper = CryptocurrencyScraper(env.COINGECKO_DEMO_API_KEY)
     import asyncio
 
@@ -37,7 +39,8 @@ def update_crypto_price(ticker: str, coin_id: str):
 
 @task(retries=3, retry_delay=timedelta(minutes=5))
 def update_commodity_price(ticker: str):
-    dt = date.today() - timedelta(days=1)
+    context = get_current_context()
+    dt = context["logical_date"].date()
     scraper = ALPHAVANTAGEScraper(env.ALPHAVANTAGE_API_KEY)
     price = scraper.get_price_by_date(type=AssetClass.COMMODITY, ticker=ticker, date=dt)
     _post_price(ticker, float(price), dt)
@@ -45,7 +48,8 @@ def update_commodity_price(ticker: str):
 
 @task(retries=3, retry_delay=timedelta(minutes=5))
 def update_index_price(ticker: str):
-    dt = date.today() - timedelta(days=2)
+    context = get_current_context()
+    dt = context["logical_date"].date()
     scraper = YFinanceScraper()
     price = scraper.get_price_by_date(ticker=ticker, date=dt)
     _post_price(ticker, float(price), dt)
@@ -53,7 +57,8 @@ def update_index_price(ticker: str):
 
 @task(retries=3, retry_delay=timedelta(minutes=5))
 def update_fund_price(ticker: str):
-    dt = date.today() - timedelta(days=1)
+    context = get_current_context()
+    dt = context["logical_date"].date()
     scraper = BPIScraper()
     price = scraper.get_price_by_date(ticker=ticker, target_date=dt)
     _post_price(ticker, float(price), dt, currency=Currency.PHP)

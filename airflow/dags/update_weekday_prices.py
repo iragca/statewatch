@@ -9,8 +9,8 @@ from price_update_tasks import update_commodity_price
     dag_id="update_weekday_prices_v2",
     description="Weekday price updates",
     schedule="0 0 * * 1-5",
-    start_date=datetime(2026, 6, 15),
-    catchup=False,
+    start_date=datetime(2026, 5, 11),
+    catchup=True,
     max_active_runs=1,
 )
 def update_wti():

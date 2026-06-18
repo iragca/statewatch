@@ -15,7 +15,7 @@ from price_update_tasks import (
     description="Daily price update for XMR, BTC, XAU, WTI, ^GSPC, M1ALFMMU",
     schedule="@daily",
     start_date=datetime(2026, 5, 11),
-    catchup=False,
+    catchup=True,
     max_active_runs=1,
 )
 def update_prices():
