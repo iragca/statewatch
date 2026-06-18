@@ -24,6 +24,9 @@ class Currency(str, Enum):
     CHF = "CHF"
     CNY = "CNY"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class Mode(str, Enum):
     DEVELOPMENT = "development"
