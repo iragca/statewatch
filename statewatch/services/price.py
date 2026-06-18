@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from statewatch.db.models import Asset, Price
+from statewatch.schemas.enums import Currency
 from statewatch.scrapers import CryptocurrencyScraper
 
 
@@ -127,7 +128,13 @@ class PriceService:
 
         return missing_dates
 
-    def add_price(self, price: float, date: datetime | date, asset_id: int):
+    def add_price(
+        self,
+        price: float,
+        date: datetime | date,
+        asset_id: int,
+        currency: Currency = Currency.USD,
+    ):
         """
         Add a new price record for a given asset.
 
@@ -139,14 +146,14 @@ class PriceService:
             The date for which the price is being added.
         asset_id : int
             The ID of the asset for which to add the price.
-        price : float
-            The price value to be added.
-        date : datetime
-            The date for which the price is being added.
+        currency : Currency
+            The currency of the price.
         """
 
         try:
-            new_price = Price(price=price, date=date, asset_id=asset_id)
+            new_price = Price(
+                price=price, date=date, asset_id=asset_id, currency=currency
+            )
             self.db.add(new_price)
             self.db.flush()
             return new_price
@@ -159,7 +166,12 @@ class PriceService:
             else:
                 raise e
 
-    def add_prices(self, prices: list[tuple[datetime, float]], asset_id: int):
+    def add_prices(
+        self,
+        prices: list[tuple[datetime, float]],
+        asset_id: int,
+        currency: Currency = Currency.USD,
+    ):
         """
         Add multiple price records for a given asset.
 
@@ -172,7 +184,8 @@ class PriceService:
         """
 
         new_prices = [
-            Price(price=price, date=date, asset_id=asset_id) for date, price in prices
+            Price(price=price, date=date, asset_id=asset_id, currency=currency)
+            for date, price in prices
         ]
         self.db.add_all(new_prices)
         return new_prices

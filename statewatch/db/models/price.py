@@ -2,10 +2,11 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 import pytz
-from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, func
+from sqlalchemy import DateTime, Enum, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from statewatch.core.config import env
+from statewatch.schemas.enums import Currency
 
 from .base import Base
 
@@ -34,6 +35,9 @@ class Price(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     asset_id: Mapped[int] = mapped_column(ForeignKey("asset.id"), nullable=False)
     price: Mapped[float] = mapped_column(nullable=False)
+    currency: Mapped[Currency] = mapped_column(
+        Enum(Currency), nullable=False, default=Currency.USD
+    )
     date: Mapped[datetime] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

@@ -13,6 +13,18 @@ class AssetClass(str, Enum):
     FUNDS = "Funds"
 
 
+class Currency(str, Enum):
+    USD = "USD"
+    EUR = "EUR"
+    GBP = "GBP"
+    JPY = "JPY"
+    PHP = "PHP"
+    CAD = "CAD"
+    AUD = "AUD"
+    CHF = "CHF"
+    CNY = "CNY"
+
+
 class Mode(str, Enum):
     DEVELOPMENT = "development"
     PRODUCTION = "production"

@@ -38,7 +38,11 @@ class CSV:
         Self
             A configured CSV instance for price data.
         """
-        return cls(data=prices, columns=["date", "price"], separator=separator)
+        return cls(
+            data=prices,
+            columns=["date", "price", "currency"],
+            separator=separator,
+        )
 
     def format(self) -> str:
         """Return the CSV document as a string.

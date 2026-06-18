@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, status
 from fastapi.responses import Response
 
 from statewatch.dependencies.auth import AuthenticatedUser
@@ -75,5 +75,6 @@ async def add_price(
             price=body.price,
             date=body.date,
             asset_id=asset.id,
+            currency=body.currency,
         )
     return {"message": f"Price for {body.ticker} added successfully"}
