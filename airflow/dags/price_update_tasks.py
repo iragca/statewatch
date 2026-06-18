@@ -5,7 +5,7 @@ import requests
 from airflow.sdk import task
 
 from statewatch.core.config import env
-from statewatch.schemas.enums import AssetClass
+from statewatch.schemas.enums import AssetClass, Currency
 from statewatch.scrapers import (
     ALPHAVANTAGEScraper,
     BPIScraper,
@@ -17,10 +17,10 @@ STATEWATCH_API_BASE_URL = os.environ["STATEWATCH_API_BASE_URL"]
 STATEWATCH_API_KEY = os.environ["STATEWATCH_API_KEY"]
 
 
-def _post_price(ticker: str, price: float, dt: date):
+def _post_price(ticker: str, price: float, dt: date, currency: Currency = Currency.USD):
     url = f"{STATEWATCH_API_BASE_URL}/price/add"
     headers = {"Authorization": f"Bearer {STATEWATCH_API_KEY}"}
-    body = {"ticker": ticker, "price": price, "date": dt.isoformat()}
+    body = {"ticker": ticker, "price": price, "date": dt.isoformat(), "currency": currency.value}
     resp = requests.post(url, json=body, headers=headers, timeout=30)
     resp.raise_for_status()
 
@@ -56,4 +56,4 @@ def update_fund_price(ticker: str):
     dt = date.today() - timedelta(days=1)
     scraper = BPIScraper()
     price = scraper.get_price_by_date(ticker=ticker, target_date=dt)
-    _post_price(ticker, float(price), dt)
+    _post_price(ticker, float(price), dt, currency=Currency.PHP)
