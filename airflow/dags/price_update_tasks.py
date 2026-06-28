@@ -20,9 +20,18 @@ STATEWATCH_API_KEY = os.environ["STATEWATCH_API_KEY"]
 def _post_price(ticker: str, price: float, dt: date, currency: Currency = Currency.USD):
     url = f"{STATEWATCH_API_BASE_URL}/price/add"
     headers = {"Authorization": f"Bearer {STATEWATCH_API_KEY}"}
-    body = {"ticker": ticker, "price": price, "date": dt.isoformat(), "currency": currency.value}
+    body = {
+        "ticker": ticker,
+        "price": price,
+        "date": dt.isoformat(),
+        "currency": currency.value,
+    }
     resp = requests.post(url, json=body, headers=headers, timeout=30)
-    resp.raise_for_status()
+
+    if resp.status_code == 409:
+        print(f"Price for {ticker} on {dt} already exists. Skipping.")
+    else:
+        resp.raise_for_status()
 
 
 @task(retries=3, retry_delay=timedelta(minutes=5))
