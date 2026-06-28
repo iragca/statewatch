@@ -1,8 +1,10 @@
 from datetime import datetime
 
 from airflow.sdk import dag
-
-from price_update_tasks import update_commodity_price
+from price_update_tasks import (
+    update_commodity_price,
+    update_index_price,
+)
 
 
 @dag(
@@ -15,6 +17,7 @@ from price_update_tasks import update_commodity_price
 )
 def update_wti():
     update_commodity_price.override(task_id="update_wti")("WTI")
+    update_index_price.override(task_id="update_gspc")("^GSPC")
 
 
 update_wti()

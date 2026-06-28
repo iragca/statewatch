@@ -5,7 +5,6 @@ from airflow.sdk import dag
 from price_update_tasks import (
     update_crypto_price,
     update_commodity_price,
-    update_index_price,
     update_fund_price,
 )
 
@@ -22,7 +21,6 @@ def update_prices():
     update_crypto_price.override(task_id="update_xmr")("XMR", "monero")
     update_crypto_price.override(task_id="update_btc")("BTC", "bitcoin")
     update_commodity_price.override(task_id="update_xau")("XAU")
-    update_index_price.override(task_id="update_gspc")("^GSPC")
     update_fund_price.override(task_id="update_m1alfmmu")("M1ALFMMU")
 
 
